@@ -19,18 +19,19 @@ def find(f_name, regex, key_str):
     try:
         with open(f_name, 'rb') as fp:
             byte_data = fp.read()
-            lines = byte_data.decode(chardet.detect(byte_data)['encoding']).splitlines()
-            contains = []
-            for i, line in enumerate(lines):
-                num_lines += 1
-                if regex.match(line) is not None:
-                    contains.append(i + 1)
+        if len(byte_data) == 0:
+            return 0
+        lines = byte_data.decode(chardet.detect(byte_data).get('encoding', 'utf-8')).splitlines()
+        contains = []
+        for i, line in enumerate(lines):
+            num_lines += 1
+            if regex.match(line) is not None:
+                contains.append(i + 1)
         if len(contains) != 0:
             sys.stdout.write(f'`{key_str}\' found in  {f_name:24s}:  [line {str(contains).strip("[]")}]\n')
     except Exception as e:
-        sys.stderr.write(f'[{f_name}: read err]\n')
-        raise e
-        pass
+        sys.stderr.write(f'[{f_name}: file read err ({type(e)})]\n')
+        # raise e
 
     return num_lines
 

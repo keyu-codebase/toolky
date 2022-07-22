@@ -38,7 +38,8 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        # 'pathos'
+        'chardet',
+        # 'pathos',
     ],
     entry_points={
         'console_scripts': [

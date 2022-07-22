@@ -7,6 +7,8 @@ import re
 import sys
 from functools import partial
 
+import chardet
+
 from toolky.core import to_parallelize, mt_thread, cpu_count
 
 __all__ = ['main']
@@ -15,9 +17,11 @@ __all__ = ['main']
 def find(f_name, regex, key_str):
     num_lines = 0
     try:
-        with open(f_name, encoding='utf-8') as fp:
+        with open(f_name, 'rb') as fp:
+            byte_data = fp.read()
+            lines = byte_data.decode(chardet.detect(byte_data)['encoding']).splitlines()
             contains = []
-            for i, line in enumerate(fp):
+            for i, line in enumerate(lines):
                 num_lines += 1
                 if regex.match(line) is not None:
                     contains.append(i + 1)

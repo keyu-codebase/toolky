@@ -51,9 +51,6 @@ def main():
         'json', 'txt', 'md',
     }
     
-    gg = partial(glob.glob, recursive=True)
-    ggi = partial(glob.iglob, recursive=True)
-    
     desc = 'Search for some texts. [Example:  %(prog)s  "./dir/*.py"  "torch.*fft"  "3\\*3 == 9" ]'
     parser = argparse.ArgumentParser(prog='sea', description=desc)
     parser.add_argument('position', metavar='D/F', type=str, nargs='?', help='directory name or file name to be searched (wildcard * and ** is supported; default: cwd `.`)', default='./')
@@ -61,6 +58,9 @@ def main():
     parser.add_argument('-mp', '--mp', action='store_true', help='with multiprocessing')
     parser.add_argument('-nr', '--nr', action='store_true', help='not recursively')
     args = parser.parse_args()
+
+    gg = partial(glob.glob, recursive=not args.nr)
+    ggi = partial(glob.iglob, recursive=not args.nr)
 
     if args.position == '/':
         raise AttributeError('search from the root would be too costly!')

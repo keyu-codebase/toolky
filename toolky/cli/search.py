@@ -45,7 +45,7 @@ def main():
     DIR_IGNORED = {'__pycache__', '__pypackages__', '.git', '.idea'}
     TARGET_POSTFIX = {
         'c', 'cc', 'cpp', 'cxx', 'cs', 'h', 'hpp', 'f', 'for',
-        'py', 'java', 'kt', 'm',
+        'py', 'pyx', 'java', 'kt', 'm',
         'js', 'ts', 'html', 'css', 'php',
         'yaml', 'sh',
         'json', 'txt', 'md',

@@ -38,12 +38,12 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'chardet',
+        'chardet', 'pytz',
         # 'pathos',
     ],
     entry_points={
         'console_scripts': [
-            'sea = toolky.cli.search:main'
+            'sea = toolky.cli.search:main',
         ]
     }
 )

@@ -1,4 +1,5 @@
 # Copyright (C) 2022 Keyu Tian. All rights reserved.
+import os
 import threading
 from functools import wraps
 from multiprocessing import Pool as ProcPool
@@ -13,31 +14,34 @@ The rule of thumb is:
 - CPU bound jobs -> multiprocessing.Pool
 - Hybrid jobs -> depends on the workload, I usually prefer the multiprocessing.Pool due to the advantage process isolation brings
 """
-__all__ = ['to_parallelize', 'cpu_count', 'getpid', 'gettid', 'mt_proc', 'mt_thread']
+__all__ = ['CPU_COUNT', 'need_parallelize', 'getpid', 'gettid', 'mt_proc', 'mt_thread']
 
 
-def to_parallelize(segsize, ratio):
-    cores = cpu_count()
-    return cores >= 4 and segsize > ratio * cores
-    
+CPU_COUNT = int(os.getenv('ARNOLD_WORKER_CPU', cpu_count()))
 
-def mt_proc(chunksize=1):
+
+def need_parallelize(num_tasks, ratio):
+    cores = int(os.getenv('ARNOLD_WORKER_CPU', cpu_count()))
+    return cores >= 4 and num_tasks > ratio * cores
+
+
+def mt_proc(threads=0, chunksize=1):
     def decorator(func):
         @wraps(func)
         def wrapper(arg_list):
-            with ProcPool(cpu_count()) as pool:
-                rets = dict(pool.starmap(func, arg_list, chunksize=chunksize))
+            with ProcPool(threads or CPU_COUNT) as pool:
+                rets = list(pool.starmap(func, arg_list, chunksize=chunksize))
             return rets
         return wrapper
     
     return decorator
 
 
-def mt_thread(chunksize=1):
+def mt_thread(threads=0, chunksize=1):
     def decorator(func):
         @wraps(func)
         def wrapper(arg_list):
-            with ThreadPool(cpu_count()) as pool:
+            with ThreadPool(threads or CPU_COUNT) as pool:
                 rets = list(pool.starmap(func, arg_list, chunksize=chunksize))
             return rets
         return wrapper

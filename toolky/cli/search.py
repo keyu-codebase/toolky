@@ -9,7 +9,7 @@ from functools import partial
 
 import chardet
 
-from toolky.core import to_parallelize, mt_thread, cpu_count
+from toolky.core import need_parallelize, mt_thread, CPU_COUNT
 
 __all__ = ['main']
 
@@ -90,13 +90,13 @@ def main():
     ks = [f'(.*{tk.replace("*", ".*").replace(rand, f"{s}*")})' for tk in t_keys]
     regex = re.compile('|'.join(ks))
     
-    mp = args.mp or to_parallelize(len(files), 100)
+    mp = args.mp or need_parallelize(len(files), 100)
     if mp:
         lines = mp_find([(f, regex, key_str) for f in files])
     else:
         lines = [find(f, regex, key_str) for f in files]
     
-    print(f'\n[in {args.position}] #files: {len(files)}, #lines: {sum(lines)}' + (f' (w/ mt{cpu_count()})' if mp else ''))
+    print(f'\n[in {args.position}] #files: {len(files)}, #lines: {sum(lines)}' + (f' (w/ mt{CPU_COUNT})' if mp else ''))
 
 
 if __name__ == '__main__':
